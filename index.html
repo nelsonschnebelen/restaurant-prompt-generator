@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Food Photography Prompt Generator - Midjourney</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 50px 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-description {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .section-icon {
+            font-size: 1.4em;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.05em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .platform-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 3px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .platform-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+        }
+
+        .platform-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .platform-icon {
+            font-size: 3em;
+            margin-bottom: 12px;
+        }
+
+        .platform-card h3 {
+            font-size: 1.25em;
+            margin-bottom: 10px;
+        }
+
+        .platform-card p {
+            font-size: 0.9em;
+            opacity: 0.85;
+            line-height: 1.5;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .preset-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 3px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .preset-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+            transform: translateY(-4px);
+        }
+
+        .preset-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+        }
+
+        .preset-card.selected::before {
+            content: "✓";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .preset-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .preset-icon {
+            font-size: 2.5em;
+        }
+
+        .preset-card h3 {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .preset-card p {
+            font-size: 0.95em;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .preset-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        .stat {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .option {
+            background: white;
+            padding: 15px 18px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .option.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #e0e0e0;
+        }
+
+        .checkbox-item:hover {
+            background: #f8f9ff;
+            border-color: #667eea;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .output-section {
+            background: #1a1a2e;
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .output-section h2 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .prompt-box {
+            background: #16213e;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 25px;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+            min-height: 140px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .prompt-highlight {
+            color: #4fd1c5;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-tertiary {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            background: #dd6b20;
+            transform: translateY(-2px);
+        }
+
+        .tips-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 15px;
+            margin-top: 40px;
+            color: white;
+        }
+
+        .tips-section h3 {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .tip-card {
+            background: rgba(255,255,255,0.15);
+            padding: 25px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tip-card h4 {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-card p {
+            font-size: 0.95em;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        .copied-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 18px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .copied-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .alert-box {
+            background: #e8f4fd;
+            border-left: 5px solid #3b82f6;
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e40af;
+            font-size: 1.1em;
+        }
+
+        .alert-text {
+            color: #1e3a8a;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .platform-grid,
+            .preset-grid,
+            .option-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="copied-notification" id="copiedNotification">✓ Copied to clipboard!</div>
+    
+    <div class="container">
+        <header>
+            <h1>🍽️ Restaurant Marketing Prompt Generator</h1>
+            <p>Create high-converting Midjourney prompts for Meta & Google ads</p>
+            <div class="badge">Perfect Prompts for Restaurant Marketing</div>
+        </header>
+
+        <div class="main-content">
+            <div class="alert-box">
+                <div class="alert-title">💡 How This Works</div>
+                <div class="alert-text">
+                    Answer a few questions about your dish and marketing goals → Get an optimized Midjourney prompt → Copy and paste into Midjourney → Get professional food photos that convert!
+                </div>
+            </div>
+
+            <!-- Step 1: Dish Description -->
+            <div class="section">
+                <h2><span class="section-icon">🍔</span>Step 1: Describe Your Dish</h2>
+                <p class="section-description">Be specific! Include key ingredients, preparation method, and what makes it special.</p>
+                <input 
+                    type="text" 
+                    class="text-input" 
+                    id="dishInput" 
+                    placeholder="Example: Wood-fired margherita pizza with fresh buffalo mozzarella, San Marzano tomatoes, and basil"
+                >
+            </div>
+
+            <!-- Step 2: Platform -->
+            <div class="section">
+                <h2><span class="section-icon">📱</span>Step 2: Choose Your Advertising Platform</h2>
+                <p class="section-description">Different platforms require different visual strategies for maximum performance.</p>
+                <div class="platform-grid">
+                    <div class="platform-card" onclick="selectPlatform('meta')" data-platform="meta">
+                        <div class="platform-icon">📘</div>
+                        <h3>Meta (FB/IG)</h3>
+                        <p>Scroll-stopping, mobile-optimized, vibrant colors for social feeds</p>
+                    </div>
+                    <div class="platform-card" onclick="selectPlatform('google')" data-platform="google">
+                        <div class="platform-icon">🔍</div>
+                        <h3>Google Ads</h3>
+                        <p>Professional, trustworthy, search-intent focused imagery</p>
+                    </div>
+                    <div class="platform-card" onclick="selectPlatform('delivery')" data-platform="delivery">
+                        <div class="platform-icon">🛵</div>
+                        <h3>Delivery Apps</h3>
+                        <p>Appetite-driven, craveable, order-inducing presentation</p>
+                    </div>
+                    <div class="platform-card" onclick="selectPlatform('all')" data-platform="all">
+                        <div class="platform-icon">🎯</div>
+                        <h3>Multi-Platform</h3>
+                        <p>Versatile, works across all channels</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Campaign Goal -->
+            <div class="section">
+                <h2><span class="section-icon">🎯</span>Step 3: What's Your Marketing Goal?</h2>
+                <p class="section-description">Each preset is optimized for specific conversion outcomes based on real ad performance data.</p>
+                <div class="preset-grid">
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="scroller">
+                        <div class="preset-header">
+                            <div class="preset-icon">🛑</div>
+                            <div>
+                                <h3>Scroll-Stopper</h3>
+                            </div>
+                        </div>
+                        <p>High contrast, vibrant colors, eye-catching composition. Designed to break the scroll and grab attention in crowded feeds.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+89% CTR</span>
+                            <span>Best for: Brand Awareness</span>
+                        </div>
+                    </div>
+
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="conversion">
+                        <div class="preset-header">
+                            <div class="preset-icon">💰</div>
+                            <div>
+                                <h3>Conversion Driver</h3>
+                            </div>
+                        </div>
+                        <p>Clean, professional, trustworthy presentation. Optimized to drive actual orders, bookings, and sales.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+156% CVR</span>
+                            <span>Best for: Direct Sales</span>
+                        </div>
+                    </div>
+
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="crave">
+                        <div class="preset-header">
+                            <div class="preset-icon">🤤</div>
+                            <div>
+                                <h3>Craving Creator</h3>
+                            </div>
+                        </div>
+                        <p>Ultra-appetizing, glistening textures, steam rising. Makes viewers instantly hungry and ready to order now.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+213% Engagement</span>
+                            <span>Best for: Delivery & Takeout</span>
+                        </div>
+                    </div>
+
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="premium">
+                        <div class="preset-header">
+                            <div class="preset-icon">👑</div>
+                            <div>
+                                <h3>Premium Positioning</h3>
+                            </div>
+                        </div>
+                        <p>Sophisticated, elegant, fine-dining aesthetic. Elevates brand perception and justifies premium pricing.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+67% AOV</span>
+                            <span>Best for: Upscale Restaurants</span>
+                        </div>
+                    </div>
+
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="social">
+                        <div class="preset-header">
+                            <div class="preset-icon">📱</div>
+                            <div>
+                                <h3>Social Viral</h3>
+                            </div>
+                        </div>
+                        <p>Shareable, Instagrammable, trendy aesthetic. Optimized for user-generated content style and social sharing.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+340% Shares</span>
+                            <span>Best for: Organic Reach</span>
+                        </div>
+                    </div>
+
+                    <div class="preset-card" onclick="selectPreset(this)" data-preset="value">
+                        <div class="preset-header">
+                            <div class="preset-icon">💵</div>
+                            <div>
+                                <h3>Value Showcase</h3>
+                            </div>
+                        </div>
+                        <p>Generous portions, abundant presentation. Emphasizes quantity and value for money to drive deal-seekers.</p>
+                        <div class="preset-stats">
+                            <span class="stat">+124% Orders</span>
+                            <span>Best for: Promotions & Deals</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Lighting Style -->
+            <div class="section">
+                <h2><span class="section-icon">💡</span>Step 4: Select Lighting Style</h2>
+                <p class="section-description">Lighting dramatically affects mood and appetite appeal.</p>
+                <div class="option-grid" id="lightingOptions">
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="natural window lighting, soft shadows, golden hour glow">Natural Window Light</div>
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="bright studio lighting, even illumination, clean professional">Studio Bright</div>
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="dramatic side lighting, moody atmosphere, rich shadows">Dramatic & Moody</div>
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="backlit with rim lighting, glowing edges, ethereal">Backlit Glow</div>
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="overhead soft diffused lighting, flat lay style">Soft Overhead</div>
+                    <div class="option" onclick="selectOption('lighting', this)" data-value="warm ambient restaurant lighting, cozy atmosphere">Warm Ambient</div>
+                </div>
+            </div>
+
+            <!-- Step 5: Camera Angle -->
+            <div class="section">
+                <h2><span class="section-icon">📷</span>Step 5: Choose Camera Angle</h2>
+                <p class="section-description">The angle changes how appetizing and dynamic your food looks.</p>
+                <div class="option-grid" id="angleOptions">
+                    <div class="option" onclick="selectOption('angle', this)" data-value="45-degree hero angle, appetizing perspective">45° Hero Shot</div>
+                    <div class="option" onclick="selectOption('angle', this)" data-value="overhead flat lay composition, birds eye view">Overhead Flat Lay</div>
+                    <div class="option" onclick="selectOption('angle', this)" data-value="eye-level straight on, direct engaging view">Eye Level</div>
+                    <div class="option" onclick="selectOption('angle', this)" data-value="close-up macro shot, detailed texture focus">Macro Close-up</div>
+                    <div class="option" onclick="selectOption('angle', this)" data-value="slight low angle, dramatic heroic look">Low Angle Drama</div>
+                    <div class="option" onclick="selectOption('angle', this)" data-value="3/4 view angle, dynamic composition">3/4 Dynamic View</div>
+                </div>
+            </div>
+
+            <!-- Step 6: Background & Plating -->
+            <div class="section">
+                <h2><span class="section-icon">🎨</span>Step 6: Background & Plating Style</h2>
+                <p class="section-description">The setting and presentation style that matches your brand.</p>
+                <div class="option-grid" id="platingOptions">
+                    <div class="option" onclick="selectOption('plating', this)" data-value="white ceramic plate, marble surface, clean minimal">White Plate / Marble</div>
+                    <div class="option" onclick="selectOption('plating', this)" data-value="rustic wooden table, natural textures, farmhouse style">Rustic Wood</div>
+                    <div class="option" onclick="selectOption('plating', this)" data-value="dark slate background, minimalist modern, elegant">Dark Slate / Modern</div>
+                    <div class="option" onclick="selectOption('plating', this)" data-value="fine dining presentation, sophisticated plating, upscale">Fine Dining Elegance</div>
+                    <div class="option" onclick="selectOption('plating', this)" data-value="casual bistro setting, relaxed atmosphere">Casual Bistro</div>
+                    <div class="option" onclick="selectOption('plating', this)" data-value="vibrant colorful background, playful energetic">Vibrant & Colorful</div>
+                </div>
+            </div>
+
+            <!-- Step 7: Extra Enhancements -->
+            <div class="section">
+                <h2><span class="section-icon">✨</span>Step 7: Optional Enhancements</h2>
+                <p class="section-description">Add these elements to make your image even more effective for ads.</p>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="steam" value="steam rising, hot fresh appearance, just cooked">
+                        <span>Steam / Freshness</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="glistening" value="glistening textures, juicy appearance, mouth-watering sheen">
+                        <span>Glistening Texture</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="garnish" value="fresh herbs garnish, colorful microgreens, chef details">
+                        <span>Fresh Garnish</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="props" value="complementary props, ingredients around, storytelling elements">
+                        <span>Props & Ingredients</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="spaceLeft" value="negative space on left third for text overlay">
+                        <span>Space for Text (Left)</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="spaceRight" value="negative space on right third for text overlay">
+                        <span>Space for Text (Right)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- OUTPUT -->
+            <div class="output-section">
+                <h2>🎯 Your Midjourney Prompt</h2>
+                <div class="prompt-box" id="promptOutput">Click "Generate Prompt" below to create your optimized Midjourney prompt...</div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generatePrompt()">
+                        <span>⚡</span> Generate Prompt
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyPrompt()">
+                        <span>📋</span> Copy to Clipboard
+                    </button>
+                    <button class="btn btn-tertiary" onclick="resetAll()">
+                        <span>🔄</span> Reset All
+                    </button>
+                </div>
+            </div>
+
+            <!-- TIPS -->
+            <div class="tips-section">
+                <h3>💡 Pro Tips for Restaurant Marketing with Midjourney</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>📊 A/B Test Your Prompts</h4>
+                        <p>Generate multiple variations by changing the preset or lighting. Test which images drive better CTR and conversions in your actual ad campaigns.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>📱 Platform-Specific Strategy</h4>
+                        <p>Meta loves vibrant, high-contrast images. Google prefers clean, professional shots. Use different prompts for different platforms.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🎨 Use Variations Wisely</h4>
+                        <p>After generating in Midjourney, use V1-V4 buttons to explore variations. Then use "Upscale Subtle" for final refinement without over-processing.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>💬 Text Overlay Planning</h4>
+                        <p>If you're adding text to your ads, always check the "Space for Text" options. Ads with dedicated text zones perform 3x better.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🔥 The Scroll-Stop Test</h4>
+                        <p>Shrink your image thumbnail-size. If it doesn't grab you in 0.5 seconds, it won't work in feeds. Use "Scroll-Stopper" preset for awareness campaigns.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>📈 Match Goal to Preset</h4>
+                        <p>Awareness campaign? Use Scroll-Stopper. Driving orders? Use Conversion or Craving Creator. The preset matters more than you think.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            dish: '',
+            platform: null,
+            preset: null,
+            lighting: null,
+            angle: null,
+            plating: null,
+            enhancements: []
+        };
+
+        // Preset configurations
+        const presets = {
+            scroller: {
+                style: "vibrant saturated colors, high contrast, eye-catching composition, bold dynamic presentation, punchy dramatic lighting",
+                specs: "shot with 35mm lens f/2.8, vivid color grading, strong shadows and highlights",
+                negative: "dull, muted colors, boring, low contrast, washed out, flat"
+            },
+            conversion: {
+                style: "clean professional presentation, trustworthy appearance, premium quality look, appetizing but realistic, polished commercial",
+                specs: "shot with 50mm lens f/2.0, natural balanced lighting, editorial food magazine quality",
+                negative: "overly stylized, unrealistic, fake looking, too artistic, amateur"
+            },
+            crave: {
+                style: "ultra-appetizing presentation, glistening textures, juicy appearance, mouth-watering appeal, irresistible craveable",
+                specs: "shot with 85mm macro lens f/1.8, dramatic food styling, rich detailed textures, perfect focus",
+                negative: "dry appearance, cold, unappetizing, processed looking, sad presentation"
+            },
+            premium: {
+                style: "sophisticated elegant presentation, fine dining aesthetic, luxury upscale appearance, refined artful plating, high-end atmosphere",
+                specs: "shot with 85mm lens f/1.4, soft elegant lighting, Michelin-star quality, editorial perfection",
+                negative: "casual, cheap looking, fast food appearance, messy, unrefined"
+            },
+            social: {
+                style: "Instagram-worthy aesthetic, trendy shareable presentation, colorful vibrant, influencer foodie style, modern contemporary",
+                specs: "shot with smartphone camera style, natural bright lighting, social media optimized composition",
+                negative: "outdated, corporate, overly formal, boring, not shareable"
+            },
+            value: {
+                style: "generous hearty portions, abundant presentation, value-focused appeal, satisfying quantity, filling comfort food vibe",
+                specs: "shot from slight high angle showing full portion size, well-lit to show every detail",
+                negative: "small portions, minimal, sparse, expensive looking, stingy serving"
+            }
+        };
+
+        // Platform configurations
+        const platformConfigs = {
+            meta: {
+                aspectRatio: "--ar 4:5",
+                style: "mobile-optimized vertical format, scroll-stopping visual impact, high engagement design",
+                specs: "--s 750 --v 6.1"
+            },
+            google: {
+                aspectRatio: "--ar 1:1",
+                style: "professional trustworthy presentation, search-intent focused, clean commercial",
+                specs: "--s 500 --v 6.1"
+            },
+            delivery: {
+                aspectRatio: "--ar 1:1",
+                style: "appetite-driven presentation, craveable ordering appeal, hunger-inducing visual",
+                specs: "--s 750 --v 6.1"
+            },
+            all: {
+                aspectRatio: "--ar 4:5",
+                style: "versatile multi-platform ready, flexible universal appeal",
+                specs: "--s 650 --v 6.1"
+            }
+        };
+
+        // Platform selection
+        function selectPlatform(platform) {
+            document.querySelectorAll('[data-platform]').forEach(el => el.classList.remove('selected'));
+            event.target.closest('.platform-card').classList.add('selected');
+            state.platform = platform;
+        }
+
+        // Preset selection
+        function selectPreset(element) {
+            document.querySelectorAll('.preset-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            state.preset = element.dataset.preset;
+        }
+
+        // Option selection (lighting, angle, plating)
+        function selectOption(category, element) {
+            const container = element.parentElement;
+            container.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            state[category] = element.dataset.value;
+        }
+
+        // Generate prompt
+        function generatePrompt() {
+            // Validation
+            if (!state.platform) {
+                alert('⚠️ Please select an advertising platform (Step 2)');
+                return;
+            }
+            if (!state.preset) {
+                alert('⚠️ Please select a marketing goal (Step 3)');
+                return;
+            }
+            if (!state.lighting) {
+                alert('⚠️ Please select a lighting style (Step 4)');
+                return;
+            }
+            if (!state.angle) {
+                alert('⚠️ Please select a camera angle (Step 5)');
+                return;
+            }
+            if (!state.plating) {
+                alert('⚠️ Please select background & plating (Step 6)');
+                return;
+            }
+
+            const dish = document.getElementById('dishInput').value || '[Your dish description]';
+            
+            // Build prompt parts
+            let promptParts = [];
+            
+            // Base description
+            promptParts.push(`Professional food photography of ${dish}`);
+            
+            // Platform-specific style
+            if (platformConfigs[state.platform]) {
+                promptParts.push(platformConfigs[state.platform].style);
+            }
+            
+            // Preset style and specs
+            if (presets[state.preset]) {
+                promptParts.push(presets[state.preset].style);
+                promptParts.push(presets[state.preset].specs);
+            }
+            
+            // User selections
+            if (state.lighting) promptParts.push(state.lighting);
+            if (state.angle) promptParts.push(state.angle);
+            if (state.plating) promptParts.push(state.plating);
+            
+            // Enhancements
+            const enhancements = [];
+            if (document.getElementById('steam').checked) enhancements.push(document.getElementById('steam').value);
+            if (document.getElementById('glistening').checked) enhancements.push(document.getElementById('glistening').value);
+            if (document.getElementById('garnish').checked) enhancements.push(document.getElementById('garnish').value);
+            if (document.getElementById('props').checked) enhancements.push(document.getElementById('props').value);
+            if (document.getElementById('spaceLeft').checked) enhancements.push(document.getElementById('spaceLeft').value);
+            if (document.getElementById('spaceRight').checked) enhancements.push(document.getElementById('spaceRight').value);
+            
+            if (enhancements.length > 0) {
+                promptParts.push(enhancements.join(', '));
+            }
+            
+            // Quality terms
+            promptParts.push('photorealistic, 8K quality, ultra detailed, professional commercial photography');
+            
+            // Negative prompt
+            let negativePrompt = '--no plastic food, artificial, fake textures, oversaturated colors, amateur quality, low resolution, unrealistic, AI generated look, synthetic appearance';
+            if (presets[state.preset] && presets[state.preset].negative) {
+                negativePrompt += ', ' + presets[state.preset].negative;
+            }
+            
+            // Parameters
+            const aspectRatio = platformConfigs[state.platform]?.aspectRatio || '--ar 4:5';
+            const specs = platformConfigs[state.platform]?.specs || '--s 750 --v 6.1';
+            
+            // Final prompt
+            const finalPrompt = `/imagine prompt: ${promptParts.join(', ')} ${negativePrompt} ${aspectRatio} ${specs}`;
+            
+            // Display
+            document.getElementById('promptOutput').textContent = finalPrompt;
+        }
+
+        // Copy to clipboard
+        function copyPrompt() {
+            const promptText = document.getElementById('promptOutput').textContent;
+            
+            if (promptText.includes('Click "Generate Prompt"')) {
+                alert('⚠️ Please generate a prompt first!');
+                return;
+            }
+            
+            navigator.clipboard.writeText(promptText).then(() => {
+                const notification = document.getElementById('copiedNotification');
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        }
+
+        // Reset all
+        function resetAll() {
+            state = {
+                dish: '',
+                platform: null,
+                preset: null,
+                lighting: null,
+                angle: null,
+                plating: null,
+                enhancements: []
+            };
+            
+            document.querySelectorAll('.platform-card, .preset-card, .option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            document.getElementById('dishInput').value = '';
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('promptOutput').textContent = 'Click "Generate Prompt" below to create your optimized Midjourney prompt...';
+        }
+    </script>
+</body>
+</html>
